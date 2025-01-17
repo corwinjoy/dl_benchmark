@@ -1,0 +1,8 @@
+deltalake==0.24.0
+numpy==2.2.1
+pandas==2.2.3
+pyarrow==18.1.0
+python-dateutil==2.9.0.post0
+pytz==2024.2
+six==1.17.0
+tzdata==2024.2
