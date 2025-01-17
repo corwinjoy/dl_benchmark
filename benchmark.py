@@ -1,19 +1,10 @@
 from common import *
 
 import pandas as pd
-import numpy as np
-import pyarrow as pa
 import pyarrow.parquet as pq
-import pyarrow.parquet.encryption as pe
-import pyarrow.dataset as ds
 from deltalake.writer import write_deltalake
 from deltalake import DeltaTable
-import deltalake as dl
-import shutil
-import os
-import time
 import math
-import base64
 
 
 # Use the deltalake table reader
