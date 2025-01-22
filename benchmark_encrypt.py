@@ -3,6 +3,7 @@ import pyarrow as pa
 import pyarrow.parquet.encryption as pe
 import pyarrow.dataset as ds
 from deltalake.writer import write_deltalake
+from deltalake import DeltaTable
 import math
 import base64
 
@@ -10,6 +11,12 @@ FOOTER_KEY = b"0123456789112345"
 FOOTER_KEY_NAME = "footer_key"
 COL_KEY = b"1234567890123450"
 COL_KEY_NAME = "col_key"
+
+def read_delta_table(dl_path):
+    dt = DeltaTable(dl_path)
+    df_files = dt.file_uris()
+    df_dl = dt.to_pandas()
+    return (df_files, df_dl)
 
 class InMemoryKmsClient(pe.KmsClient):
     """This is a mock class implementation of KmsClient, built for testing
@@ -75,6 +82,7 @@ def run_delta_ecrypt():
     ncols = 20
     clear_folder(dl_folder)
     df = gen_df(nrows, ncols)
+
     encryption_config = create_encryption_config(df)
     decryption_config = create_decryption_config()
     kms_connection_config = create_kms_connection_config()
@@ -86,11 +94,16 @@ def run_delta_ecrypt():
     parquet_decryption_cfg = ds.ParquetDecryptionConfig(
         crypto_factory, kms_connection_config, decryption_config
     )
+    pq_scan_opts = ds.ParquetFragmentScanOptions(
+        decryption_config=parquet_decryption_cfg
+    )
 
     parquet_format = ds.ParquetFileFormat()
     write_options = parquet_format.make_write_options(encryption_config=parquet_encryption_cfg)
-    # For now, it seems deltalake ignores encryption options
-    write_deltalake(dl_path, df, file_options=write_options)
+
+    # It seems the engine is not fully setup for encryption.
+    # Anyway, the pyarrow engine is deprecated
+    write_deltalake(dl_path, df, file_options=write_options, engine = "pyarrow")
     if nappend > 0:
         for i in range(nappend):
             df = gen_df(nrows, ncols)
@@ -176,4 +189,7 @@ def run_pq_encrypt():
 # run_bm_scenarios()
 
 # Benchmark encryption of parquet
-run_pq_encrypt()
+# run_pq_encrypt()
+
+# Try deltalake encryption
+run_delta_ecrypt()
