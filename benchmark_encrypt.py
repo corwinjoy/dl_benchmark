@@ -84,6 +84,7 @@ def run_delta_ecrypt():
     df = gen_df(nrows, ncols)
 
     encryption_config = create_encryption_config(df)
+    print(encryption_config)
     decryption_config = create_decryption_config()
     kms_connection_config = create_kms_connection_config()
 
@@ -103,12 +104,15 @@ def run_delta_ecrypt():
 
     # It seems the engine is not fully setup for encryption.
     # Anyway, the pyarrow engine is deprecated
-    write_deltalake(dl_path, df, file_options=write_options, engine = "pyarrow")
+
+    write_deltalake(dl_path, df, file_options=write_options, engine="pyarrow")
+    # write_deltalake(dl_path, df, engine="pyarrow")
     if nappend > 0:
         for i in range(nappend):
             df = gen_df(nrows, ncols)
             write_deltalake(dl_path, df, mode="append", file_options=write_options)
 
+    return
     tbl_tm = timed(read_delta_table, dl_path)
     (df_files, df_dl) = tbl_tm[0]
     tm_delta = tbl_tm[1]

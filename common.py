@@ -5,6 +5,10 @@ import shutil
 import os
 import time
 
+dl_folder = "/home/cjoy/src/dl_benchmark/tmp"
+pq_folder = "/home/cjoy/src/dl_benchmark/tmp_pq"
+dl_path = dl_folder + "/deltars_table"
+
 def clear_folder(folder_path):
     """Clears the contents of a folder without deleting the folder itself."""
 
@@ -21,10 +25,6 @@ def clear_folder(folder_path):
         except Exception as e:
             print(f'Failed to delete {file_path}. Reason: {e}')
 
-
-dl_folder = "/home/cjoy/src/dl_benchmark/tmp"
-pq_folder = "/home/cjoy/src/dl_benchmark/tmp_pq"
-dl_path = dl_folder + "/deltars_table"
 
 def gen_df(nrows, ncols):
     # Create a DataFrame with random data
